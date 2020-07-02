@@ -77,8 +77,12 @@ public class MovieSnapshot {
     }
 
     @JsonProperty("Released")
-    private void convertToDate(String dateString) throws ParseException {
+    private void convertToDate(String dateString) {
         DateFormat format = new SimpleDateFormat("dd MMM yyyy");
-        this.released = format.parse(dateString);
+        try {
+            this.released = format.parse(dateString);
+        } catch (ParseException e) {
+            this.released = null;
+        }
     }
 }

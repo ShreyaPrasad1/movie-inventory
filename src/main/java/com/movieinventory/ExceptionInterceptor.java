@@ -14,7 +14,9 @@ public class ExceptionInterceptor extends ResponseEntityExceptionHandler {
 
     @ExceptionHandler(value = InvalidMovieTitleException.class)
     public ResponseEntity<Object> handleException(InvalidMovieTitleException exception, WebRequest request) {
-        return handleExceptionInternal(exception, "Movie Title does not exist",
+        return handleExceptionInternal(exception,
+                new ApiResponse(HttpStatus.OK, "Movie Title does not exist"),
                 new HttpHeaders(), HttpStatus.OK, request);
     }
+
 }
