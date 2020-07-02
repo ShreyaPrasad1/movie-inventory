@@ -20,9 +20,9 @@ public class MovieSnapshotController {
     }
 
     @PostMapping("/movies")
-    public ResponseEntity<String> addMovieSnapshots(@RequestBody List<String> titles, @RequestHeader String apiKey) {
+    public ResponseEntity<String> addMovieSnapshots(@RequestBody List<String> titles) {
+        movieSnapshotService.createSnapshots(titles);
         return new ResponseEntity<>("Movie Snapshots created", HttpStatus.CREATED);
     }
-
 
 }

@@ -1,8 +1,10 @@
 package com.movieinventory.service;
 
-import com.movieinventory.domain.MovieSnapshot;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.movieinventory.model.MovieSnapshot;
 import com.movieinventory.repository.MovieSnapshotRepository;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
@@ -10,13 +12,15 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Service
-
 public class MovieSnapshotService {
 
     private MovieSnapshotRepository movieSnapshotRepository;
+    private ObjectMapper objectMapper;
 
-    public MovieSnapshotService(MovieSnapshotRepository movieSnapshotRepository) {
+    MovieSnapshotService(MovieSnapshotRepository movieSnapshotRepository) {
         this.movieSnapshotRepository = movieSnapshotRepository;
+        this.objectMapper = new ObjectMapper().
+                disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES);
     }
 
     public void createSnapshots(List<String> movieTitles) {
@@ -25,15 +29,18 @@ public class MovieSnapshotService {
 
         ArrayList<MovieSnapshot> movieSnapshots = new ArrayList<>();
 
-        movieTitles.stream().forEach(title -> {
+        movieTitles.forEach(title -> {
             String titleUrl = url + "&t=" + title;
             RestTemplate restTemplate = new RestTemplate();
-            ResponseEntity<MovieSnapshot> movieSnapshot = restTemplate.getForEntity(titleUrl, MovieSnapshot.class);
-            movieSnapshots.add(movieSnapshot.getBody());
+            String movieSnapshotJson = restTemplate.getForObject(titleUrl, String.class);
+            try {
+                assert movieSnapshotJson != null;
+                MovieSnapshot movieSnapshot = objectMapper.readValue(movieSnapshotJson, MovieSnapshot.class);
+                movieSnapshots.add(movieSnapshot);
+            } catch (JsonProcessingException e) {
+                e.printStackTrace();
+            }
         });
-
         movieSnapshotRepository.saveAll(movieSnapshots);
-
-        System.out.println("records saved successfully");
     }
 }
