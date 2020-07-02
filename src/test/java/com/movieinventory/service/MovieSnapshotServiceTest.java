@@ -1,16 +1,16 @@
 package com.movieinventory.service;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.movieinventory.model.MovieSnapshot;
 import com.movieinventory.model.Rating;
 import com.movieinventory.repository.MovieSnapshotRepository;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.springframework.test.context.junit.jupiter.SpringExtension;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.web.client.RestTemplate;
 
 import java.text.DateFormat;
@@ -23,10 +23,9 @@ import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
-@ExtendWith(SpringExtension.class)
+@ExtendWith(MockitoExtension.class)
 class MovieSnapshotServiceTest {
 
     @Mock
@@ -35,28 +34,26 @@ class MovieSnapshotServiceTest {
     @Mock
     private RestTemplate restTemplate;
 
-    @Mock
-    private ObjectMapper objectMapper;
-
     @InjectMocks
-    private MovieSnapshotService movieSnapshotService = new MovieSnapshotService(movieSnapshotRepository);
+    private MovieSnapshotService movieSnapshotService = new MovieSnapshotService(movieSnapshotRepository, restTemplate);
 
 
     @Test
-    void shouldGetMoviesListFromGivenUrlAndSaveMovieSnapshots() throws JsonProcessingException, ParseException {
+    void shouldGetMoviesListFromGivenUrlAndSaveMovieSnapshots() throws ParseException {
         MovieSnapshot movieSnapshot = new MovieSnapshot("Deadpool",
                 "2016",
                 convertToDate("12 Feb 2016"),
                 "Tim Miller",
                 Arrays.asList(new Rating("Internet Movie Database", "8.0/10"),
-                        new Rating("Rotten Tomatoes", "85%")));
+                        new Rating("Rotten Tomatoes", "85%")),
+                true);
 
         List<String> movieTitles = Collections.singletonList("Deadpool");
         ArgumentCaptor<List> captor = ArgumentCaptor.forClass(List.class);
 
-        when(restTemplate.getForObject(any(), eq(String.class)))
-                .thenReturn("");
-        when(objectMapper.readValue(any(String.class), eq(MovieSnapshot.class))).thenReturn(movieSnapshot);
+        when(restTemplate.getForObject("http://www.omdbapi.com/?apikey=b5bece98&t=Deadpool", MovieSnapshot.class))
+                .thenReturn(movieSnapshot);
+
         movieSnapshotService.createSnapshots(movieTitles);
 
         verify(movieSnapshotRepository, times(1)).saveAll(captor.capture());
@@ -69,6 +66,27 @@ class MovieSnapshotServiceTest {
         assertThat(movieSnapshot.getRatings().get(0)).isEqualToComparingFieldByField(actualCapturedValue.get(0).getRatings().get(0));
 
     }
+
+    @Test
+    void shouldThrowErrorWhenAPIDoesNotReturnMovieSnapshot() {
+
+        MovieSnapshot movieSnapshot = new MovieSnapshot(null, null, null, null, null, false);
+
+        List<String> movieTitles = Collections.singletonList("Deadpool");
+        ArgumentCaptor<List> captor = ArgumentCaptor.forClass(List.class);
+
+        when(restTemplate.getForObject("http://www.omdbapi.com/?apikey=b5bece98&t=Deadpool", MovieSnapshot.class))
+                .thenReturn(movieSnapshot);
+
+
+        Exception exception = Assertions.assertThrows(InvalidMovieTitleException.class, () -> movieSnapshotService.createSnapshots(movieTitles));
+
+        String expectedMessage = "Deadpool, does not exist";
+        String actualMessage = exception.getMessage();
+        assertEquals(expectedMessage, actualMessage);
+
+    }
+
 
     private Date convertToDate(String date) throws ParseException {
         DateFormat format = new SimpleDateFormat("dd MMM yyyy");

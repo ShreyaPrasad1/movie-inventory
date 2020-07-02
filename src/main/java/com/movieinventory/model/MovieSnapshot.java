@@ -33,12 +33,16 @@ public class MovieSnapshot {
     @JsonProperty("Ratings")
     private List<Rating> ratings;
 
-    public MovieSnapshot(String title, String year, Date released, String director, List<Rating> ratings) throws ParseException {
+    @JsonProperty("Response")
+    private Boolean response;
+
+    public MovieSnapshot(String title, String year, Date released, String director, List<Rating> ratings, Boolean response) {
         this.title = title;
         this.year = year;
         this.released = released;
         this.director = director;
         this.ratings = ratings;
+        this.response = response;
     }
 
     public MovieSnapshot() {
@@ -66,6 +70,10 @@ public class MovieSnapshot {
 
     public List<Rating> getRatings() {
         return ratings;
+    }
+
+    public Boolean getResponse() {
+        return response;
     }
 
     @JsonProperty("Released")
