@@ -23,7 +23,7 @@ public class MovieSnapshotController {
     }
 
     @PostMapping("/movies")
-    public ResponseEntity<ApiResponse> addMovieSnapshots(@RequestBody List<String> titles, @RequestHeader("x-api-key") String apiKeyHeader) throws AuthenticationException, org.apache.tomcat.websocket.AuthenticationException {
+    public ResponseEntity<ApiResponse> addMovieSnapshots(@RequestBody List<String> titles, @RequestHeader("x-api-key") String apiKeyHeader) {
         apiKeyValidation.validate(apiKeyHeader);
         movieSnapshotService.createSnapshots(titles);
         return new ResponseEntity<>(new ApiResponse(HttpStatus.CREATED,

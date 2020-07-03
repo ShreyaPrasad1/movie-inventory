@@ -1,7 +1,7 @@
 package com.movieinventory.service;
 
 public class InvalidMovieTitleException extends RuntimeException {
-    public InvalidMovieTitleException(String titles) {
-        super(String.format("Snapshots not created. %sdoes not exist", titles));
+    public InvalidMovieTitleException(String title) {
+        super(String.format("Snapshots not created. %s does not exist", title));
     }
 }

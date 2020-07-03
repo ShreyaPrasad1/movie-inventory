@@ -38,7 +38,7 @@ class MovieSnapshotServiceTest {
 
 
     @Test
-    void shouldGetMoviesListFromGivenUrlAndSaveMovieSnapshots() throws ParseException {
+    void shouldGetMoviesListFromGivenUrlAndSaveMovieSnapshots() {
         MovieSnapshot movieSnapshot = new MovieSnapshot("Deadpool",
                 "2016",
                 convertToDate("12 Feb 2016"),
@@ -80,14 +80,14 @@ class MovieSnapshotServiceTest {
 
         Exception exception = Assertions.assertThrows(InvalidMovieTitleException.class, () -> movieSnapshotService.createSnapshots(movieTitles));
 
-        String expectedMessage = "Snapshots not created. Deadpool, does not exist";
+        String expectedMessage = "Snapshots not created. Deadpool does not exist";
         String actualMessage = exception.getMessage();
         assertEquals(expectedMessage, actualMessage);
 
     }
 
     @Test
-    void shouldReturnListOfMovies() throws ParseException {
+    void shouldReturnListOfMovies() {
         when(movieSnapshotRepository.findAll()).thenReturn(getAllMovies());
 
         List<MovieSnapshot> movieSnapshots = movieSnapshotService.getMovieSnapshots();
@@ -99,7 +99,7 @@ class MovieSnapshotServiceTest {
     }
 
 
-    private List<MovieSnapshot> getAllMovies() throws ParseException {
+    private List<MovieSnapshot> getAllMovies() {
         MovieSnapshot movieSnapshotOne = new MovieSnapshot("Deadpool",
                 "2016",
                 convertToDate("12 Feb 2016"),
@@ -119,8 +119,12 @@ class MovieSnapshotServiceTest {
         return Arrays.asList(movieSnapshotOne, movieSnapshotTwo);
     }
 
-    private Date convertToDate(String date) throws ParseException {
+    private Date convertToDate(String date) {
         DateFormat format = new SimpleDateFormat("dd MMM yyyy");
-        return format.parse(date);
+        try {
+            return format.parse(date);
+        } catch (ParseException e) {
+            return null;
+        }
     }
 }

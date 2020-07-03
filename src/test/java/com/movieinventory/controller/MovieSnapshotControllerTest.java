@@ -61,7 +61,7 @@ class MovieSnapshotControllerTest {
                 .andExpect(jsonPath("$[1].Ratings[0].Source").value("Internet Movie Database"));
     }
 
-    private List<MovieSnapshot> getAllMovies() throws ParseException {
+    private List<MovieSnapshot> getAllMovies() {
         MovieSnapshot movieSnapshotOne = new MovieSnapshot("Deadpool",
                 "2016",
                 convertToDate("12 Feb 2016"),
@@ -81,8 +81,12 @@ class MovieSnapshotControllerTest {
         return Arrays.asList(movieSnapshotOne, movieSnapshotTwo);
     }
 
-    private Date convertToDate(String date) throws ParseException {
+    private Date convertToDate(String date) {
         DateFormat format = new SimpleDateFormat("dd MMM yyyy");
-        return format.parse(date);
+        try {
+            return format.parse(date);
+        } catch (ParseException e) {
+            return null;
+        }
     }
 }

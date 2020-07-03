@@ -19,27 +19,23 @@ public class MovieSnapshotService {
         this.restTemplate = restTemplate;
     }
 
-    public void createSnapshots(List<String> movieTitles) throws InvalidMovieTitleException {
+    private void titleValidation(String title, Boolean apiResponse) {
+        if (!apiResponse) {
+            throw new InvalidMovieTitleException(title);
+        }
+    }
 
+    public void createSnapshots(List<String> movieTitles) {
         String url = "http://www.omdbapi.com/?apikey=b5bece98";
 
         ArrayList<MovieSnapshot> movieSnapshots = new ArrayList<>();
-
         ArrayList<String> invalidTitles = new ArrayList<>();
         movieTitles.forEach(title -> {
             String titleUrl = url + "&t=" + title;
             MovieSnapshot movieSnapshot = restTemplate.getForObject(titleUrl, MovieSnapshot.class);
-            if (!movieSnapshot.getResponse()) {
-                invalidTitles.add(title);
-            }
+            titleValidation(title, movieSnapshot.getResponse());
             movieSnapshots.add(movieSnapshot);
         });
-
-        if (invalidTitles.size() != 0) {
-            String invalidMovieTitles = invalidTitles.stream().reduce("", (titles, title) -> titles += title + ", ");
-            throw new InvalidMovieTitleException(invalidMovieTitles);
-        }
-
         movieSnapshotRepository.saveAll(movieSnapshots);
     }
 

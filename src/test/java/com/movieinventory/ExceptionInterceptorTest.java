@@ -27,10 +27,10 @@ class ExceptionInterceptorTest {
     @Test
     void shouldSendInvalidTitleExceptionMsgWhenInvalidTitleExceptionIsThrown() {
         ResponseEntity<Object> responseEntity = exceptionInterceptor.handleInvalidMovieException(
-                new InvalidMovieTitleException("deadpol, batmy, "), webRequest);
+                new InvalidMovieTitleException("deadpol"), webRequest);
 
         ApiResponse actualApiResponse = (ApiResponse) responseEntity.getBody();
-        ApiResponse expectedApiResponse = new ApiResponse(HttpStatus.OK, "Snapshots not created. deadpol, batmy, does not exist");
+        ApiResponse expectedApiResponse = new ApiResponse(HttpStatus.OK, "Snapshots not created. deadpol does not exist");
         assertEquals(expectedApiResponse.getMessage(), actualApiResponse.getMessage());
         assertEquals(expectedApiResponse.getStatus(), actualApiResponse.getStatus());
     }
