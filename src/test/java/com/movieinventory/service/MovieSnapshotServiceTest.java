@@ -1,6 +1,5 @@
 package com.movieinventory.service;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.movieinventory.model.MovieSnapshot;
 import com.movieinventory.model.Rating;
 import com.movieinventory.repository.MovieSnapshotRepository;
@@ -81,12 +80,44 @@ class MovieSnapshotServiceTest {
 
         Exception exception = Assertions.assertThrows(InvalidMovieTitleException.class, () -> movieSnapshotService.createSnapshots(movieTitles));
 
-        String expectedMessage = "Deadpool, does not exist";
+        String expectedMessage = "Snapshots not created. Deadpool, does not exist";
         String actualMessage = exception.getMessage();
         assertEquals(expectedMessage, actualMessage);
 
     }
 
+    @Test
+    void shouldReturnListOfMovies() throws ParseException {
+        when(movieSnapshotRepository.findAll()).thenReturn(getAllMovies());
+
+        List<MovieSnapshot> movieSnapshots = movieSnapshotService.getMovieSnapshots();
+
+        assertEquals(2, movieSnapshots.size());
+        List<MovieSnapshot> expectedMovieSnapshots = getAllMovies();
+        assertEquals(movieSnapshots.get(0).getTitle(), expectedMovieSnapshots.get(0).getTitle());
+        assertEquals(movieSnapshots.get(1).getTitle(), expectedMovieSnapshots.get(1).getTitle());
+    }
+
+
+    private List<MovieSnapshot> getAllMovies() throws ParseException {
+        MovieSnapshot movieSnapshotOne = new MovieSnapshot("Deadpool",
+                "2016",
+                convertToDate("12 Feb 2016"),
+                "Tim Miller",
+                Arrays.asList(new Rating("Internet Movie Database", "8.0/10"),
+                        new Rating("Rotten Tomatoes", "85%")),
+                true);
+
+        MovieSnapshot movieSnapshotTwo = new MovieSnapshot("Batman",
+                "2016",
+                convertToDate("12 Feb 2016"),
+                "Tim Miller",
+                Arrays.asList(new Rating("Internet Movie Database", "8.0/10"),
+                        new Rating("Rotten Tomatoes", "85%")),
+                true);
+
+        return Arrays.asList(movieSnapshotOne, movieSnapshotTwo);
+    }
 
     private Date convertToDate(String date) throws ParseException {
         DateFormat format = new SimpleDateFormat("dd MMM yyyy");

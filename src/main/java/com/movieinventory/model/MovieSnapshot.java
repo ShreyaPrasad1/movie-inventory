@@ -1,5 +1,6 @@
 package com.movieinventory.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import org.hibernate.annotations.Cascade;
 import org.hibernate.annotations.CascadeType;
@@ -15,6 +16,7 @@ import java.util.List;
 public class MovieSnapshot {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
+    @JsonIgnore
     private long id;
 
     @JsonProperty("Title")
@@ -33,6 +35,7 @@ public class MovieSnapshot {
     @JsonProperty("Ratings")
     private List<Rating> ratings;
 
+    @Transient
     @JsonProperty("Response")
     private Boolean response;
 

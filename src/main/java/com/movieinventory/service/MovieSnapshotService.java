@@ -36,9 +36,14 @@ public class MovieSnapshotService {
         });
 
         if (invalidTitles.size() != 0) {
-            String invalidMovieTitles = movieTitles.stream().reduce("", (titles, title) -> titles += title + ", ");
+            String invalidMovieTitles = invalidTitles.stream().reduce("", (titles, title) -> titles += title + ", ");
             throw new InvalidMovieTitleException(invalidMovieTitles);
         }
+
         movieSnapshotRepository.saveAll(movieSnapshots);
+    }
+
+    public List<MovieSnapshot> getMovieSnapshots() {
+        return movieSnapshotRepository.findAll();
     }
 }

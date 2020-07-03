@@ -30,7 +30,7 @@ class ExceptionInterceptorTest {
                 new InvalidMovieTitleException("deadpol, batmy, "), webRequest);
 
         ApiResponse actualApiResponse = (ApiResponse) responseEntity.getBody();
-        ApiResponse expectedApiResponse = new ApiResponse(HttpStatus.OK, "deadpol, batmy, does not exist");
+        ApiResponse expectedApiResponse = new ApiResponse(HttpStatus.OK, "Snapshots not created. deadpol, batmy, does not exist");
         assertEquals(expectedApiResponse.getMessage(), actualApiResponse.getMessage());
         assertEquals(expectedApiResponse.getStatus(), actualApiResponse.getStatus());
     }
