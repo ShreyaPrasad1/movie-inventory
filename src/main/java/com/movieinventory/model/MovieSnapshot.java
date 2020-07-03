@@ -1,5 +1,6 @@
 package com.movieinventory.model;
 
+import com.fasterxml.jackson.annotation.JsonGetter;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import org.hibernate.annotations.Cascade;
@@ -11,6 +12,8 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
+
+import static com.fasterxml.jackson.annotation.JsonProperty.Access.WRITE_ONLY;
 
 @Entity
 public class MovieSnapshot {
@@ -36,7 +39,7 @@ public class MovieSnapshot {
     private List<Rating> ratings;
 
     @Transient
-    @JsonProperty("Response")
+    @JsonProperty(value = "Response", access = WRITE_ONLY)
     private Boolean response;
 
     public MovieSnapshot(String title, String year, Date released, String director, List<Rating> ratings, Boolean response) {
@@ -63,6 +66,7 @@ public class MovieSnapshot {
         return year;
     }
 
+    @JsonGetter("Released")
     public Date getReleased() {
         return released;
     }
