@@ -1,5 +1,6 @@
 package com.movieinventory;
 
+import com.movieinventory.auth.AuthenticationException;
 import com.movieinventory.service.InvalidMovieTitleException;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -13,10 +14,17 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExcep
 public class ExceptionInterceptor extends ResponseEntityExceptionHandler {
 
     @ExceptionHandler(value = InvalidMovieTitleException.class)
-    public ResponseEntity<Object> handleException(InvalidMovieTitleException exception, WebRequest request) {
+    public ResponseEntity<Object> handleInvalidMovieException(InvalidMovieTitleException exception, WebRequest request) {
         return handleExceptionInternal(exception,
-                new ApiResponse(HttpStatus.OK, "Movie Title does not exist"),
+                new ApiResponse(HttpStatus.OK, exception.getMessage()),
                 new HttpHeaders(), HttpStatus.OK, request);
+    }
+
+    @ExceptionHandler(value = AuthenticationException.class)
+    public ResponseEntity<Object> handleAuthenticationException(AuthenticationException exception, WebRequest webRequest) {
+        return handleExceptionInternal(exception,
+                new ApiResponse(HttpStatus.UNAUTHORIZED, exception.getMessage()),
+                new HttpHeaders(), HttpStatus.UNAUTHORIZED, webRequest);
     }
 
 }

@@ -8,3 +8,6 @@ spring:
     hibernate:
       ddl-auto: create
     database-platform: org.hibernate.dialect.H2Dialect
+auth:
+  x-api-key: d2ViLWFwcGxpY2F0aW9uLWluLWZsYXNr
+
