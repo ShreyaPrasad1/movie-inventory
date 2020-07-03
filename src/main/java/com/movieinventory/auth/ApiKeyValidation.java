@@ -8,10 +8,9 @@ public class ApiKeyValidation {
     @Value("${auth.x-api-key}")
     private String xApiKey;
 
-    public boolean validate(String receivedApiKey) throws AuthenticationException {
+    public void validate(String receivedApiKey) throws AuthenticationException {
         if (!xApiKey.equals(receivedApiKey)) {
             throw new AuthenticationException();
         }
-        return true;
     }
 }

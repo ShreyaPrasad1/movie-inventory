@@ -25,8 +25,4 @@ class ApiKeyValidationTest {
         assertDoesNotThrow(() -> apiKeyValidation.validate("d2ViLWFwcGxpY2F0aW9uLWluLWZsYXNr"));
     }
 
-    @Test
-    void shouldNotTrueWhenApikeyIsCorrect() throws AuthenticationException {
-        assertTrue(apiKeyValidation.validate("d2ViLWFwcGxpY2F0aW9uLWluLWZsYXNr"));
-    }
 }

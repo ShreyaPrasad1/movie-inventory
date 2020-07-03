@@ -5,6 +5,7 @@ import com.movieinventory.model.MovieSnapshot;
 import com.movieinventory.model.Rating;
 import com.movieinventory.service.MovieSnapshotService;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
@@ -38,7 +39,7 @@ class MovieSnapshotControllerTest {
 
     @Test
     void shouldReturnHttpStatus201WhenMovieSnapshotIsSaved() throws Exception {
-        when(apiKeyValidation.validate("randomKey")).thenReturn(true);
+        Mockito.doNothing().when(apiKeyValidation).validate("randomKey");
         this.mockMvc.perform(post("/movies").contentType(MediaType.APPLICATION_JSON)
                 .header("x-api-key", "randomKey")
                 .content("[\"Deadpool\"]")).andExpect(status().isCreated())
@@ -50,11 +51,11 @@ class MovieSnapshotControllerTest {
         when(movieSnapshotService.getMovieSnapshots()).thenReturn(getAllMovies());
         this.mockMvc.perform(get("/movies"))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$[0].released").value("2016-02-11T18:30:00.000+00:00"))
+                .andExpect(jsonPath("$[0].Released").value("2016-02-11T18:30:00.000+00:00"))
                 .andExpect(jsonPath("$[0].Title").value("Deadpool"))
                 .andExpect(jsonPath("$[0].Director").value("Tim Miller"))
                 .andExpect(jsonPath("$[0].Ratings[0].Source").value("Internet Movie Database"))
-                .andExpect(jsonPath("$[1].released").value("2016-02-11T18:30:00.000+00:00"))
+                .andExpect(jsonPath("$[1].Released").value("2016-02-11T18:30:00.000+00:00"))
                 .andExpect(jsonPath("$[1].Title").value("Batman"))
                 .andExpect(jsonPath("$[1].Director").value("Tim Miller"))
                 .andExpect(jsonPath("$[1].Ratings[0].Source").value("Internet Movie Database"));
